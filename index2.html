@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Learn & Play - Kids Learning Games!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #fef9c3;
+            --bg-secondary: #fef08a;
+            --accent-pink: #f472b6;
+            --accent-purple: #a78bfa;
+            --accent-blue: #60a5fa;
+            --accent-green: #4ade80;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --accent-yellow: #facc15;
+            --accent-cyan: #22d3d1;
+            --accent-indigo: #818cf8;
+            --accent-lime: #a3e635;
+            --accent-rose: #fb7185;
+            --accent-sky: #38bdf8;
+            --text-dark: #1e1b4b;
+            --text-light: #4c1d95;
+            --card-bg: #ffffff;
+            --shadow: rgba(99, 102, 241, 0.3);
+        }
+
+        .dark {
+            --bg-primary: #1e1b4b;
+            --bg-secondary: #312e81;
+            --text-dark: #fef9c3;
+            --text-light: #c4b5fd;
+            --card-bg: #3730a3;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-dark);
+        }
+
+        .background-decorations {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-item {
+            position: absolute;
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(30px, 8vw, 60px);
+            opacity: 0.15;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .home-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            padding-bottom: 40px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(32px, 9vw, 56px);
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            margin-top: 10px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .subtitle {
+            font-size: clamp(14px, 3.5vw, 20px);
+            color: var(--text-light);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .section-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(18px, 4.5vw, 24px);
+            color: var(--text-dark);
+            margin: 20px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            max-width: 50px;
+        }
+
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            max-width: 450px;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 20px var(--shadow);
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3));
+            pointer-events: none;
+        }
+
+        .game-card:hover, .game-card:active {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--accent-yellow);
+        }
+
+        .game-card.pink { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+        .game-card.purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+        .game-card.blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .game-card.green { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
+        .game-card.orange { background: linear-gradient(135deg, #ffedd5, #fed7aa); }
+        .game-card.cyan { background: linear-gradient(135deg, #cffafe, #a5f3fc); }
+        .game-card.indigo { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+        .game-card.lime { background: linear-gradient(135deg, #ecfccb, #d9f99d); }
+        .game-card.rose { background: linear-gradient(135deg, #ffe4e6, #fecdd3); }
+        .game-card.sky { background: linear-gradient(135deg, #e0f2fe, #bae6fd); }
+
+        .dark .game-card.pink { background: linear-gradient(135deg, #831843, #be185d); }
+        .dark .game-card.purple { background: linear-gradient(135deg, #4c1d95, #6d28d9); }
+        .dark .game-card.blue { background: linear-gradient(135deg, #1e3a8a, #1d4ed8); }
+        .dark .game-card.green { background: linear-gradient(135deg, #14532d, #15803d); }
+        .dark .game-card.orange { background: linear-gradient(135deg, #7c2d12, #c2410c); }
+        .dark .game-card.cyan { background: linear-gradient(135deg, #155e75, #0891b2); }
+        .dark .game-card.indigo { background: linear-gradient(135deg, #312e81, #4338ca); }
+        .dark .game-card.lime { background: linear-gradient(135deg, #365314, #4d7c0f); }
+        .dark .game-card.rose { background: linear-gradient(135deg, #881337, #be123c); }
+        .dark .game-card.sky { background: linear-gradient(135deg, #0c4a6e, #0369a1); }
+
+        .game-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            display: block;
+            animation: wiggle 3s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .game-name {
+            font-family: 'Fredoka One', cursive;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .game-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            min-height: 100vh;
+            padding-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .game-screen.active { display: flex; }
+
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover { transform: scale(1.1); }
+
+        .score-display {
+            background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            color: #1e1b4b;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .game-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(22px, 5.5vw, 32px);
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .game-instruction {
+            font-size: clamp(14px, 3.5vw, 16px);
+            color: var(--text-light);
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .target-display {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(70px, 22vw, 120px);
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 15px 0 25px;
+            animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .target-display.number-style {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .target-display.emoji-style {
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 380px;
+            padding: 10px;
+        }
+
+        .option-btn {
+            aspect-ratio: 1;
+            background: var(--card-bg);
+            border: 4px solid transparent;
+            border-radius: 18px;
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(28px, 9vw, 42px);
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 5px 18px var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-btn.text-option {
+            font-size: clamp(14px, 4vw, 18px);
+            padding: 8px;
+            aspect-ratio: auto;
+            min-height: 60px;
+        }
+
+        .option-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-blue);
+        }
+
+        .option-btn:active { transform: scale(0.95); }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, var(--accent-green), #22c55e);
+            border-color: #16a34a;
+            animation: correctPulse 0.5s ease;
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background: linear-gradient(135deg, var(--accent-red), #ef4444);
+            border-color: #dc2626;
+            animation: shake 0.5s ease;
+            color: white;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .order-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 25px;
+            padding: 18px;
+            background: var(--card-bg);
+            border-radius: 18px;
+            box-shadow: 0 5px 18px var(--shadow);
+            min-height: 70px;
+        }
+
+        .order-slot {
+            width: clamp(38px, 11vw, 55px);
+            height: clamp(38px, 11vw, 55px);
+            background: var(--bg-secondary);
+            border: 3px dashed var(--accent-purple);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(18px, 5.5vw, 28px);
+            color: var(--text-dark);
+            transition: all 0.2s;
+        }
+
+        .order-slot.filled {
+            border-style: solid;
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        }
+
+        .dark .order-slot.filled {
+            background: linear-gradient(135deg, #14532d, #15803d);
+        }
+
+        .selectable-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .select-btn {
+            width: clamp(42px, 12vw, 60px);
+            height: clamp(42px, 12vw, 60px);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            border-radius: 14px;
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(20px, 6.5vw, 30px);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 18px var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .select-btn.number-style {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+        }
+
+        .select-btn:hover { transform: translateY(-5px) scale(1.05); }
+        .select-btn:active { transform: scale(0.95); }
+        .select-btn.used { opacity: 0.3; pointer-events: none; }
+
+        .match-container {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            max-width: 450px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .match-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .match-item {
+            width: clamp(55px, 16vw, 75px);
+            height: clamp(55px, 16vw, 75px);
+            background: var(--card-bg);
+            border: 4px solid var(--accent-purple);
+            border-radius: 16px;
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(24px, 7vw, 36px);
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 5px 18px var(--shadow);
+        }
+
+        .match-item:hover { transform: scale(1.08); }
+
+        .match-item.selected {
+            border-color: var(--accent-yellow);
+            background: linear-gradient(135deg, #fef9c3, #fef08a);
+            transform: scale(1.1);
+        }
+
+        .match-item.matched {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            pointer-events: none;
+        }
+
+        .dark .match-item.matched {
+            background: linear-gradient(135deg, #14532d, #15803d);
+        }
+
+        .count-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            padding: 25px;
+            background: var(--card-bg);
+            border-radius: 22px;
+            box-shadow: 0 5px 18px var(--shadow);
+            margin-bottom: 25px;
+            max-width: 320px;
+            min-height: 100px;
+        }
+
+        .count-item {
+            font-size: clamp(32px, 9vw, 45px);
+            animation: popIn 0.3s ease backwards;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .celebration {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+        }
+
+        .celebration.active { display: flex; }
+
+        .celebration-content {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 28px;
+            text-align: center;
+            animation: celebratePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin: 20px;
+        }
+
+        @keyframes celebratePop {
+            0% { transform: scale(0) rotate(-10deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        .celebration-emoji {
+            font-size: 70px;
+            margin-bottom: 15px;
+            animation: spin 1s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg) scale(0); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .celebration-text {
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .celebration-sub {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .play-again-btn {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            border: none;
+            padding: 12px 35px;
+            border-radius: 25px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 18px var(--shadow);
+        }
+
+        .play-again-btn:hover { transform: scale(1.05); }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 101;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(28px, 9vw, 48px);
+            padding: 18px 35px;
+            border-radius: 18px;
+            z-index: 50;
+            pointer-events: none;
+            animation: feedbackPop 0.8s ease forwards;
+        }
+
+        .feedback.correct {
+            background: linear-gradient(135deg, var(--accent-green), #22c55e);
+            color: white;
+        }
+
+        .feedback.wrong {
+            background: linear-gradient(135deg, var(--accent-red), #ef4444);
+            color: white;
+        }
+
+        @keyframes feedbackPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+
+        /* Drawing Pad Styles */
+        .draw-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .draw-tab {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 20px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            box-shadow: 0 3px 10px var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .draw-tab.active {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            color: white;
+        }
+
+        .draw-tab:hover {
+            transform: translateY(-2px);
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 10px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .guide-letter {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 180px;
+            color: rgba(0, 0, 0, 0.08);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .dark .guide-letter {
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        #drawCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            cursor: crosshair;
+            touch-action: none;
+            z-index: 2;
+        }
+
+        .draw-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .draw-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            cursor: pointer;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .draw-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .draw-btn:active {
+            transform: scale(0.95);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, var(--accent-red), #dc2626);
+            color: white;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .color-btn {
+            width: 36px;
+            height: 36px;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .color-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .color-btn.active {
+            border-color: var(--accent-yellow);
+            transform: scale(1.2);
+        }
+
+        .brush-sizes {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .brush-btn {
+            width: 40px;
+            height: 40px;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+            box-shadow: 0 3px 10px var(--shadow);
+        }
+
+        .brush-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .brush-btn.active {
+            border-color: var(--accent-blue);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-decorations" id="bgDecorations"></div>
+
+    <div class="container">
+        <!-- Home Screen -->
+        <div class="home-screen" id="homeScreen">
+            <h1 class="title">Learn & Play</h1>
+            <p class="subtitle">✨ শিশুদের মজার শিক্ষামূলক গেম! ✨</p>
+
+            <!-- Letter Games -->
+            <div class="section-title">🔤 অক্ষর গেম</div>
+            <div class="game-modes">
+                <div class="game-card pink" onclick="startGame('find')">
+                    <span class="game-icon">🔍</span>
+                    <span class="game-name">অক্ষর খুঁজি</span>
+                </div>
+                <div class="game-card purple" onclick="startGame('match')">
+                    <span class="game-icon">🎯</span>
+                    <span class="game-name">অক্ষর মেলাও</span>
+                </div>
+                <div class="game-card blue" onclick="startGame('order')">
+                    <span class="game-icon">📝</span>
+                    <span class="game-name">ABC সাজাও</span>
+                </div>
+                <div class="game-card green" onclick="startGame('pop')">
+                    <span class="game-icon">🎈</span>
+                    <span class="game-name">অক্ষর পপ</span>
+                </div>
+            </div>
+
+            <!-- Number Games -->
+            <div class="section-title">🔢 সংখ্যা গেম</div>
+            <div class="game-modes">
+                <div class="game-card orange" onclick="startGame('findNum')">
+                    <span class="game-icon">🔎</span>
+                    <span class="game-name">সংখ্যা খুঁজি</span>
+                </div>
+                <div class="game-card cyan" onclick="startGame('numOrder')">
+                    <span class="game-icon">🔢</span>
+                    <span class="game-name">১২৩ সাজাও</span>
+                </div>
+                <div class="game-card indigo" onclick="startGame('count')">
+                    <span class="game-icon">⭐</span>
+                    <span class="game-name">তারা গণনা</span>
+                </div>
+            </div>
+
+            <!-- Fruits Games -->
+            <div class="section-title">🍎 ফল চেনো</div>
+            <div class="game-modes">
+                <div class="game-card rose" onclick="startGame('fruits')">
+                    <span class="game-icon">🍓</span>
+                    <span class="game-name">ফল খুঁজি</span>
+                </div>
+            </div>
+
+            <!-- Vegetables Games -->
+            <div class="section-title">🥕 সবজি চেনো</div>
+            <div class="game-modes">
+                <div class="game-card lime" onclick="startGame('veggies')">
+                    <span class="game-icon">🥦</span>
+                    <span class="game-name">সবজি খুঁজি</span>
+                </div>
+            </div>
+
+            <!-- Birds Games -->
+            <div class="section-title">🐦 পাখি চেনো</div>
+            <div class="game-modes">
+                <div class="game-card sky" onclick="startGame('birds')">
+                    <span class="game-icon">🦜</span>
+                    <span class="game-name">পাখি খুঁজি</span>
+                </div>
+            </div>
+
+            <!-- Animals Games -->
+            <div class="section-title">🐾 পশু চেনো</div>
+            <div class="game-modes">
+                <div class="game-card orange" onclick="startGame('animals')">
+                    <span class="game-icon">🦁</span>
+                    <span class="game-name">পশু খুঁজি</span>
+                </div>
+            </div>
+
+            <!-- Colors Games -->
+            <div class="section-title">🎨 রং চেনো</div>
+            <div class="game-modes">
+                <div class="game-card purple" onclick="startGame('colors')">
+                    <span class="game-icon">🌈</span>
+                    <span class="game-name">রং খুঁজি</span>
+                </div>
+            </div>
+
+            <!-- Shapes Games -->
+            <div class="section-title">🔷 আকৃতি চেনো</div>
+            <div class="game-modes">
+                <div class="game-card cyan" onclick="startGame('shapes')">
+                    <span class="game-icon">⬟</span>
+                    <span class="game-name">আকৃতি খুঁজি</span>
+                </div>
+            </div>
+
+            <!-- Drawing Pad -->
+            <div class="section-title">✏️ লেখা শেখো</div>
+            <div class="game-modes">
+                <div class="game-card pink" onclick="startGame('draw')">
+                    <span class="game-icon">✍️</span>
+                    <span class="game-name">ড্রয়িং প্যাড</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Find Letter Game -->
+        <div class="game-screen" id="findGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="findScore">0</span></div>
+            </div>
+            <h2 class="game-title">🔍 অক্ষর খুঁজি!</h2>
+            <p class="game-instruction">উপরের অক্ষরটি খুঁজে বের করো</p>
+            <div class="target-display" id="targetLetter">A</div>
+            <div class="options-grid" id="findOptions"></div>
+        </div>
+
+        <!-- Match Letters Game -->
+        <div class="game-screen" id="matchGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="matchScore">0</span></div>
+            </div>
+            <h2 class="game-title">🎯 অক্ষর মেলাও!</h2>
+            <p class="game-instruction">বড় হাতের সাথে ছোট হাতের মেলাও</p>
+            <div class="match-container" id="matchContainer"></div>
+        </div>
+
+        <!-- ABC Order Game -->
+        <div class="game-screen" id="orderGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="orderScore">0</span></div>
+            </div>
+            <h2 class="game-title">📝 ABC সাজাও!</h2>
+            <p class="game-instruction">অক্ষরগুলো সঠিক ক্রমে সাজাও</p>
+            <div class="order-slots" id="alphabetSlots"></div>
+            <div class="selectable-items" id="draggableLetters"></div>
+        </div>
+
+        <!-- Letter Pop Game -->
+        <div class="game-screen" id="popGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="popScore">0</span></div>
+            </div>
+            <h2 class="game-title">🎈 অক্ষর পপ!</h2>
+            <p class="game-instruction">সব <span id="popTargetDisplay">A</span> বাবল পপ করো!</p>
+            <div class="options-grid" id="popGrid" style="grid-template-columns: repeat(4, 1fr);"></div>
+        </div>
+
+        <!-- Find Number Game -->
+        <div class="game-screen" id="findNumGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="findNumScore">0</span></div>
+            </div>
+            <h2 class="game-title">🔎 সংখ্যা খুঁজি!</h2>
+            <p class="game-instruction">উপরের সংখ্যাটি খুঁজে বের করো</p>
+            <div class="target-display number-style" id="targetNumber">5</div>
+            <div class="options-grid" id="findNumOptions"></div>
+        </div>
+
+        <!-- Number Order Game -->
+        <div class="game-screen" id="numOrderGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="numOrderScore">0</span></div>
+            </div>
+            <h2 class="game-title">🔢 ১২৩ সাজাও!</h2>
+            <p class="game-instruction">সংখ্যাগুলো ক্রমে সাজাও</p>
+            <div class="order-slots" id="numberSlots"></div>
+            <div class="selectable-items" id="selectableNumbers"></div>
+        </div>
+
+        <!-- Count Stars Game -->
+        <div class="game-screen" id="countGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="countScore">0</span></div>
+            </div>
+            <h2 class="game-title">⭐ তারা গণনা!</h2>
+            <p class="game-instruction">কয়টি তারা আছে গুনে বলো?</p>
+            <div class="count-display" id="starsDisplay"></div>
+            <div class="options-grid" id="countOptions"></div>
+        </div>
+
+        <!-- Fruits Game -->
+        <div class="game-screen" id="fruitsGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="fruitsScore">0</span></div>
+            </div>
+            <h2 class="game-title">🍎 ফল চেনো!</h2>
+            <p class="game-instruction">এই ফলটির নাম কী?</p>
+            <div class="target-display emoji-style" id="targetFruit">🍎</div>
+            <div class="options-grid" id="fruitsOptions"></div>
+        </div>
+
+        <!-- Vegetables Game -->
+        <div class="game-screen" id="veggiesGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="veggiesScore">0</span></div>
+            </div>
+            <h2 class="game-title">🥕 সবজি চেনো!</h2>
+            <p class="game-instruction">এই সবজিটির নাম কী?</p>
+            <div class="target-display emoji-style" id="targetVeggie">🥕</div>
+            <div class="options-grid" id="veggiesOptions"></div>
+        </div>
+
+        <!-- Birds Game -->
+        <div class="game-screen" id="birdsGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="birdsScore">0</span></div>
+            </div>
+            <h2 class="game-title">🐦 পাখি চেনো!</h2>
+            <p class="game-instruction">এই পাখিটির নাম কী?</p>
+            <div class="target-display emoji-style" id="targetBird">🦜</div>
+            <div class="options-grid" id="birdsOptions"></div>
+        </div>
+
+        <!-- Animals Game -->
+        <div class="game-screen" id="animalsGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="animalsScore">0</span></div>
+            </div>
+            <h2 class="game-title">🐾 পশু চেনো!</h2>
+            <p class="game-instruction">এই পশুটির নাম কী?</p>
+            <div class="target-display emoji-style" id="targetAnimal">🦁</div>
+            <div class="options-grid" id="animalsOptions"></div>
+        </div>
+
+        <!-- Colors Game -->
+        <div class="game-screen" id="colorsGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="colorsScore">0</span></div>
+            </div>
+            <h2 class="game-title">🎨 রং চেনো!</h2>
+            <p class="game-instruction">এটি কোন রং?</p>
+            <div class="count-display" id="colorDisplay" style="min-width: 150px; min-height: 150px;"></div>
+            <div class="options-grid" id="colorsOptions"></div>
+        </div>
+
+        <!-- Shapes Game -->
+        <div class="game-screen" id="shapesGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display">⭐ <span id="shapesScore">0</span></div>
+            </div>
+            <h2 class="game-title">🔷 আকৃতি চেনো!</h2>
+            <p class="game-instruction">এটি কোন আকৃতি?</p>
+            <div class="target-display emoji-style" id="targetShape">⬟</div>
+            <div class="options-grid" id="shapesOptions"></div>
+        </div>
+
+        <!-- Drawing Pad Game -->
+        <div class="game-screen" id="drawGame">
+            <div class="game-header">
+                <button class="back-btn" onclick="goHome()">⬅️</button>
+                <div class="score-display" id="drawCounter">১/২৬</div>
+            </div>
+            <h2 class="game-title">✏️ লেখা শেখো!</h2>
+
+            <!-- Category Tabs -->
+            <div class="draw-tabs">
+                <button class="draw-tab active" onclick="switchDrawCategory('english')">ABC</button>
+                <button class="draw-tab" onclick="switchDrawCategory('numbers')">১২৩</button>
+                <button class="draw-tab" onclick="switchDrawCategory('swarabarna')">স্বরবর্ণ</button>
+                <button class="draw-tab" onclick="switchDrawCategory('banjonbarna')">ব্যঞ্জনবর্ণ</button>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <div class="guide-letter" id="guideLetter">A</div>
+                <canvas id="drawCanvas" width="280" height="280"></canvas>
+            </div>
+
+            <!-- Controls -->
+            <div class="draw-controls">
+                <button class="draw-btn" onclick="prevDrawItem()">⬅️</button>
+                <button class="draw-btn clear-btn" onclick="clearCanvas()">🗑️ মুছো</button>
+                <button class="draw-btn" onclick="nextDrawItem()">➡️</button>
+            </div>
+
+            <!-- Color Palette -->
+            <div class="color-palette">
+                <button class="color-btn active" style="background:#1e1b4b" onclick="setDrawColor('#1e1b4b')"></button>
+                <button class="color-btn" style="background:#ef4444" onclick="setDrawColor('#ef4444')"></button>
+                <button class="color-btn" style="background:#3b82f6" onclick="setDrawColor('#3b82f6')"></button>
+                <button class="color-btn" style="background:#22c55e" onclick="setDrawColor('#22c55e')"></button>
+                <button class="color-btn" style="background:#f97316" onclick="setDrawColor('#f97316')"></button>
+                <button class="color-btn" style="background:#a855f7" onclick="setDrawColor('#a855f7')"></button>
+            </div>
+
+            <!-- Brush Size -->
+            <div class="brush-sizes">
+                <button class="brush-btn" onclick="setBrushSize(4)">●</button>
+                <button class="brush-btn active" onclick="setBrushSize(8)">⬤</button>
+                <button class="brush-btn" onclick="setBrushSize(14)"><span style="font-size:24px">⬤</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration Modal -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🏆</div>
+            <h2 class="celebration-text">অসাধারণ!</h2>
+            <p class="celebration-sub">তুমি করে ফেলেছো! বাহ্!</p>
+            <button class="play-again-btn" onclick="playAgain()">আবার খেলো! 🎮</button>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            document.documentElement.classList.toggle('dark', e.matches);
+        });
+
+        // Game state
+        let currentGame = '';
+        let scores = { find: 0, match: 0, order: 0, pop: 0, findNum: 0, numOrder: 0, count: 0, fruits: 0, veggies: 0, birds: 0, animals: 0, colors: 0, shapes: 0, draw: 0 };
+        let currentRound = 0;
+        const maxRounds = 5;
+
+        // Data
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        const fruits = [
+            { emoji: '🍎', name: 'আপেল' },
+            { emoji: '🍌', name: 'কলা' },
+            { emoji: '🍇', name: 'আঙুর' },
+            { emoji: '🍊', name: 'কমলা' },
+            { emoji: '🍓', name: 'স্ট্রবেরি' },
+            { emoji: '🍉', name: 'তরমুজ' },
+            { emoji: '🥭', name: 'আম' },
+            { emoji: '🍍', name: 'আনারস' },
+            { emoji: '🍑', name: 'পিচ' },
+            { emoji: '🍒', name: 'চেরি' },
+            { emoji: '🥝', name: 'কিউই' },
+            { emoji: '🍋', name: 'লেবু' }
+        ];
+
+        const veggies = [
+            { emoji: '🥕', name: 'গাজর' },
+            { emoji: '🥦', name: 'ব্রকলি' },
+            { emoji: '🍅', name: 'টমেটো' },
+            { emoji: '🥔', name: 'আলু' },
+            { emoji: '🌽', name: 'ভুট্টা' },
+            { emoji: '🥒', name: 'শসা' },
+            { emoji: '🌶️', name: 'মরিচ' },
+            { emoji: '🧅', name: 'পেঁয়াজ' },
+            { emoji: '🧄', name: 'রসুন' },
+            { emoji: '🥬', name: 'বাঁধাকপি' },
+            { emoji: '🍆', name: 'বেগুন' },
+            { emoji: '🫑', name: 'ক্যাপসিকাম' }
+        ];
+
+        const birds = [
+            { emoji: '🦜', name: 'টিয়া' },
+            { emoji: '🦅', name: 'ঈগল' },
+            { emoji: '🦆', name: 'হাঁস' },
+            { emoji: '🦢', name: 'রাজহাঁস' },
+            { emoji: '🦉', name: 'পেঁচা' },
+            { emoji: '🐦', name: 'চড়ুই' },
+            { emoji: '🦚', name: 'ময়ূর' },
+            { emoji: '🐓', name: 'মোরগ' },
+            { emoji: '🦩', name: 'ফ্লেমিংগো' },
+            { emoji: '🕊️', name: 'পায়রা' },
+            { emoji: '🦃', name: 'টার্কি' },
+            { emoji: '🐧', name: 'পেঙ্গ���ইন' }
+        ];
+
+        const animals = [
+            { emoji: '🦁', name: 'সিংহ' },
+            { emoji: '🐯', name: 'বাঘ' },
+            { emoji: '🐘', name: 'হাতি' },
+            { emoji: '🦒', name: 'জিরাফ' },
+            { emoji: '🐻', name: 'ভালুক' },
+            { emoji: '🐵', name: 'বানর' },
+            { emoji: '🦊', name: 'শিয়াল' },
+            { emoji: '🐺', name: 'নেকড়ে' },
+            { emoji: '🦌', name: 'হরিণ' },
+            { emoji: '🐄', name: 'গরু' },
+            { emoji: '🐎', name: 'ঘোড়া' },
+            { emoji: '🐑', name: 'ভেড়া' },
+            { emoji: '🐐', name: 'ছাগল' },
+            { emoji: '🐕', name: 'কুকুর' },
+            { emoji: '🐈', name: 'বিড়াল' },
+            { emoji: '🐇', name: 'খরগোশ' }
+        ];
+
+        const colors = [
+            { color: '#ef4444', name: 'লাল' },
+            { color: '#3b82f6', name: 'নীল' },
+            { color: '#22c55e', name: 'সবুজ' },
+            { color: '#eab308', name: 'হলুদ' },
+            { color: '#f97316', name: 'কমলা' },
+            { color: '#a855f7', name: 'বেগুনি' },
+            { color: '#ec4899', name: 'গোলাপী' },
+            { color: '#000000', name: 'কালো' },
+            { color: '#ffffff', name: 'সাদা' },
+            { color: '#78350f', name: 'বাদামী' },
+            { color: '#6b7280', name: 'ধূসর' },
+            { color: '#06b6d4', name: 'আসমানী' }
+        ];
+
+        const shapes = [
+            { emoji: '⬛', name: 'বর্গ' },
+            { emoji: '🔵', name: 'বৃত্ত' },
+            { emoji: '🔺', name: 'ত্রিভুজ' },
+            { emoji: '⬜', name: 'আয়তক্ষেত্র' },
+            { emoji: '💎', name: 'হীরক' },
+            { emoji: '⭐', name: 'তারা' },
+            { emoji: '💗', name: 'হৃদয়' },
+            { emoji: '⬡', name: 'ষড়ভুজ' },
+            { emoji: '🔷', name: 'রম্বস' },
+            { emoji: '⬟', name: 'পঞ্চভুজ' }
+        ];
+
+        // Background decorations
+        function createBackgroundDecorations() {
+            const bg = document.getElementById('bgDecorations');
+            const items = ['A', 'B', '1', '2', '🍎', '🥕', '🐦', 'C', '3', '🍌', '🥦', '🦜', 'D', '4', '🍇', '🌽', '🦅'];
+            const colors = ['#f472b6', '#a78bfa', '#60a5fa', '#4ade80', '#fb923c', '#facc15', '#22d3d1'];
+
+            for (let i = 0; i < 16; i++) {
+                const item = document.createElement('div');
+                item.className = 'floating-item';
+                item.textContent = items[i % items.length];
+                item.style.left = Math.random() * 100 + '%';
+                item.style.top = Math.random() * 100 + '%';
+                item.style.color = colors[Math.floor(Math.random() * colors.length)];
+                item.style.animationDelay = Math.random() * 5 + 's';
+                bg.appendChild(item);
+            }
+        }
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function showFeedback(isCorrect) {
+            const fb = document.createElement('div');
+            fb.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+            fb.textContent = isCorrect ? '⭐ সাবাশ!' : '❌ আবার চেষ্টা!';
+            document.body.appendChild(fb);
+            setTimeout(() => fb.remove(), 800);
+        }
+
+        function createConfetti() {
+            const colors = ['#f472b6', '#a78bfa', '#60a5fa', '#4ade80', '#fb923c', '#facc15'];
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    const c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.style.left = Math.random() * 100 + 'vw';
+                    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    c.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        function showCelebration() {
+            createConfetti();
+            document.getElementById('celebration').classList.add('active');
+        }
+
+        function goHome() {
+            document.querySelectorAll('.game-screen').forEach(g => g.classList.remove('active'));
+            document.getElementById('homeScreen').style.display = 'flex';
+            currentGame = '';
+        }
+
+        function playAgain() {
+            document.getElementById('celebration').classList.remove('active');
+            startGame(currentGame);
+        }
+
+        function getRandomBubbleColor() {
+            const colors = [
+                'linear-gradient(135deg, #f472b6, #ec4899)',
+                'linear-gradient(135deg, #a78bfa, #8b5cf6)',
+                'linear-gradient(135deg, #60a5fa, #3b82f6)',
+                'linear-gradient(135deg, #4ade80, #22c55e)',
+                'linear-gradient(135deg, #fb923c, #f97316)',
+                'linear-gradient(135deg, #facc15, #eab308)'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function startGame(game) {
+            currentGame = game;
+            currentRound = 0;
+            scores[game] = 0;
+            document.getElementById(game + 'Score').textContent = '0';
+            document.getElementById('homeScreen').style.display = 'none';
+            document.querySelectorAll('.game-screen').forEach(g => g.classList.remove('active'));
+            document.getElementById(game + 'Game').classList.add('active');
+
+            const initFns = {
+                find: initFindGame, match: initMatchGame, order: initOrderGame, pop: initPopGame,
+                findNum: initFindNumGame, numOrder: initNumOrderGame, count: initCountGame,
+                fruits: initFruitsGame, veggies: initVeggiesGame, birds: initBirdsGame,
+                animals: initAnimalsGame, colors: initColorsGame, shapes: initShapesGame,
+                draw: initDrawGame
+            };
+            initFns[game]();
+        }
+
+        // ========== LETTER GAMES ==========
+        function initFindGame() {
+            const target = alphabet[Math.floor(Math.random() * 26)];
+            document.getElementById('targetLetter').textContent = target;
+            const container = document.getElementById('findOptions');
+            container.innerHTML = '';
+            let opts = [target];
+            while (opts.length < 6) {
+                const l = alphabet[Math.floor(Math.random() * 26)];
+                if (!opts.includes(l)) opts.push(l);
+            }
+            shuffle(opts).forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = l;
+                btn.onclick = () => checkAnswer(btn, l === target, 'find', initFindGame);
+                container.appendChild(btn);
+            });
+        }
+
+        let matchSelected = null, matchedCount = 0;
+        function initMatchGame() {
+            matchSelected = null;
+            matchedCount = 0;
+            const container = document.getElementById('matchContainer');
+            container.innerHTML = '';
+            const letters = shuffle(alphabet).slice(0, 4);
+            const upperCol = document.createElement('div');
+            upperCol.className = 'match-column';
+            const lowerCol = document.createElement('div');
+            lowerCol.className = 'match-column';
+
+            shuffle([...letters]).forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = 'match-item';
+                btn.textContent = l;
+                btn.dataset.letter = l;
+                btn.dataset.case = 'upper';
+                btn.onclick = () => selectMatchLetter(btn);
+                upperCol.appendChild(btn);
+            });
+
+            shuffle([...letters]).forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = 'match-item';
+                btn.textContent = l.toLowerCase();
+                btn.dataset.letter = l;
+                btn.dataset.case = 'lower';
+                btn.onclick = () => selectMatchLetter(btn);
+                lowerCol.appendChild(btn);
+            });
+
+            container.appendChild(upperCol);
+            container.appendChild(lowerCol);
+        }
+
+        function selectMatchLetter(btn) {
+            if (btn.classList.contains('matched')) return;
+            if (!matchSelected) {
+                matchSelected = btn;
+                btn.classList.add('selected');
+            } else {
+                if (matchSelected === btn) {
+                    btn.classList.remove('selected');
+                    matchSelected = null;
+                    return;
+                }
+                if (matchSelected.dataset.case === btn.dataset.case) {
+                    matchSelected.classList.remove('selected');
+                    matchSelected = btn;
+                    btn.classList.add('selected');
+                    return;
+                }
+                if (matchSelected.dataset.letter === btn.dataset.letter) {
+                    matchSelected.classList.remove('selected');
+                    matchSelected.classList.add('matched');
+                    btn.classList.add('matched');
+                    matchedCount++;
+                    scores.match += 10;
+                    document.getElementById('matchScore').textContent = scores.match;
+                    showFeedback(true);
+                    if (matchedCount >= 4) {
+                        currentRound++;
+                        if (currentRound >= maxRounds) setTimeout(showCelebration, 1000);
+                        else setTimeout(initMatchGame, 1000);
+                    }
+                } else {
+                    matchSelected.classList.remove('selected');
+                    showFeedback(false);
+                }
+                matchSelected = null;
+            }
+        }
+
+        let orderLetters = [], currentOrderIndex = 0;
+        function initOrderGame() {
+            currentOrderIndex = 0;
+            const startIdx = Math.floor(Math.random() * 22);
+            orderLetters = alphabet.slice(startIdx, startIdx + 5);
+            const slotsC = document.getElementById('alphabetSlots');
+            const lettersC = document.getElementById('draggableLetters');
+            slotsC.innerHTML = '';
+            lettersC.innerHTML = '';
+            orderLetters.forEach(() => {
+                const slot = document.createElement('div');
+                slot.className = 'order-slot';
+                slotsC.appendChild(slot);
+            });
+            shuffle([...orderLetters]).forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = 'select-btn';
+                btn.textContent = l;
+                btn.dataset.value = l;
+                btn.onclick = () => selectOrderItem(btn, orderLetters, 'order', '#alphabetSlots', initOrderGame);
+                lettersC.appendChild(btn);
+            });
+        }
+
+        let popTarget = '', popRemaining = 0;
+        function initPopGame() {
+            popTarget = alphabet[Math.floor(Math.random() * 26)];
+            document.getElementById('popTargetDisplay').textContent = popTarget;
+            const grid = document.getElementById('popGrid');
+            grid.innerHTML = '';
+            let letters = [popTarget, popTarget, popTarget, popTarget];
+            while (letters.length < 12) {
+                const l = alphabet[Math.floor(Math.random() * 26)];
+                if (l !== popTarget) letters.push(l);
+            }
+            shuffle(letters);
+            popRemaining = 4;
+            letters.forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = l;
+                btn.style.background = getRandomBubbleColor();
+                btn.style.color = 'white';
+                btn.onclick = () => popBubble(btn, l);
+                grid.appendChild(btn);
+            });
+        }
+
+        function popBubble(btn, letter) {
+            if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+            if (letter === popTarget) {
+                btn.classList.add('correct');
+                btn.style.transform = 'scale(0)';
+                btn.style.opacity = '0';
+                popRemaining--;
+                scores.pop += 10;
+                document.getElementById('popScore').textContent = scores.pop;
+                if (popRemaining <= 0) {
+                    showFeedback(true);
+                    currentRound++;
+                    if (currentRound >= maxRounds) setTimeout(showCelebration, 1000);
+                    else setTimeout(initPopGame, 1000);
+                }
+            } else {
+                btn.classList.add('wrong');
+                showFeedback(false);
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        // ========== NUMBER GAMES ==========
+        function initFindNumGame() {
+            const target = numbers[Math.floor(Math.random() * 10)];
+            document.getElementById('targetNumber').textContent = target;
+            const container = document.getElementById('findNumOptions');
+            container.innerHTML = '';
+            let opts = [target];
+            while (opts.length < 6) {
+                const n = numbers[Math.floor(Math.random() * 10)];
+                if (!opts.includes(n)) opts.push(n);
+            }
+            shuffle(opts).forEach(n => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = n;
+                btn.onclick = () => checkAnswer(btn, n === target, 'findNum', initFindNumGame);
+                container.appendChild(btn);
+            });
+        }
+
+        let orderNumbers = [], currentNumOrderIndex = 0;
+        function initNumOrderGame() {
+            currentNumOrderIndex = 0;
+            const startIdx = Math.floor(Math.random() * 6);
+            orderNumbers = numbers.slice(startIdx, startIdx + 5);
+            const slotsC = document.getElementById('numberSlots');
+            const numsC = document.getElementById('selectableNumbers');
+            slotsC.innerHTML = '';
+            numsC.innerHTML = '';
+            orderNumbers.forEach(() => {
+                const slot = document.createElement('div');
+                slot.className = 'order-slot';
+                slotsC.appendChild(slot);
+            });
+            shuffle([...orderNumbers]).forEach(n => {
+                const btn = document.createElement('button');
+                btn.className = 'select-btn number-style';
+                btn.textContent = n;
+                btn.dataset.value = n;
+                btn.onclick = () => selectOrderItem(btn, orderNumbers, 'numOrder', '#numberSlots', initNumOrderGame, true);
+                numsC.appendChild(btn);
+            });
+        }
+
+        let correctCount = 0;
+        function initCountGame() {
+            correctCount = Math.floor(Math.random() * 9) + 1;
+            const display = document.getElementById('starsDisplay');
+            display.innerHTML = '';
+            const emojis = ['⭐', '🌟', '✨', '💫'];
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            for (let i = 0; i < correctCount; i++) {
+                const star = document.createElement('span');
+                star.className = 'count-item';
+                star.textContent = emoji;
+                star.style.animationDelay = (i * 0.1) + 's';
+                display.appendChild(star);
+            }
+            const container = document.getElementById('countOptions');
+            container.innerHTML = '';
+            let opts = [correctCount];
+            while (opts.length < 6) {
+                const n = Math.floor(Math.random() * 10) + 1;
+                if (!opts.includes(n) && n <= 10) opts.push(n);
+            }
+            shuffle(opts).forEach(n => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = n;
+                btn.onclick = () => checkAnswer(btn, n === correctCount, 'count', initCountGame);
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== FRUITS GAME ==========
+        let currentFruit = null;
+        function initFruitsGame() {
+            currentFruit = fruits[Math.floor(Math.random() * fruits.length)];
+            document.getElementById('targetFruit').textContent = currentFruit.emoji;
+            const container = document.getElementById('fruitsOptions');
+            container.innerHTML = '';
+            let opts = [currentFruit];
+            while (opts.length < 6) {
+                const f = fruits[Math.floor(Math.random() * fruits.length)];
+                if (!opts.find(o => o.name === f.name)) opts.push(f);
+            }
+            shuffle(opts).forEach(f => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn text-option';
+                btn.textContent = f.name;
+                btn.onclick = () => checkAnswer(btn, f.name === currentFruit.name, 'fruits', initFruitsGame);
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== VEGETABLES GAME ==========
+        let currentVeggie = null;
+        function initVeggiesGame() {
+            currentVeggie = veggies[Math.floor(Math.random() * veggies.length)];
+            document.getElementById('targetVeggie').textContent = currentVeggie.emoji;
+            const container = document.getElementById('veggiesOptions');
+            container.innerHTML = '';
+            let opts = [currentVeggie];
+            while (opts.length < 6) {
+                const v = veggies[Math.floor(Math.random() * veggies.length)];
+                if (!opts.find(o => o.name === v.name)) opts.push(v);
+            }
+            shuffle(opts).forEach(v => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn text-option';
+                btn.textContent = v.name;
+                btn.onclick = () => checkAnswer(btn, v.name === currentVeggie.name, 'veggies', initVeggiesGame);
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== BIRDS GAME ==========
+        let currentBird = null;
+        function initBirdsGame() {
+            currentBird = birds[Math.floor(Math.random() * birds.length)];
+            document.getElementById('targetBird').textContent = currentBird.emoji;
+            const container = document.getElementById('birdsOptions');
+            container.innerHTML = '';
+            let opts = [currentBird];
+            while (opts.length < 6) {
+                const b = birds[Math.floor(Math.random() * birds.length)];
+                if (!opts.find(o => o.name === b.name)) opts.push(b);
+            }
+            shuffle(opts).forEach(b => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn text-option';
+                btn.textContent = b.name;
+                btn.onclick = () => checkAnswer(btn, b.name === currentBird.name, 'birds', initBirdsGame);
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== ANIMALS GAME ==========
+        let currentAnimal = null;
+        function initAnimalsGame() {
+            currentAnimal = animals[Math.floor(Math.random() * animals.length)];
+            document.getElementById('targetAnimal').textContent = currentAnimal.emoji;
+            const container = document.getElementById('animalsOptions');
+            container.innerHTML = '';
+            let opts = [currentAnimal];
+            while (opts.length < 6) {
+                const a = animals[Math.floor(Math.random() * animals.length)];
+                if (!opts.find(o => o.name === a.name)) opts.push(a);
+            }
+            shuffle(opts).forEach(a => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn text-option';
+                btn.textContent = a.name;
+                btn.onclick = () => checkAnswer(btn, a.name === currentAnimal.name, 'animals', initAnimalsGame);
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== COLORS GAME ==========
+        let currentColor = null;
+        function initColorsGame() {
+            currentColor = colors[Math.floor(Math.random() * colors.length)];
+            const display = document.getElementById('colorDisplay');
+            display.style.background = currentColor.color;
+            display.style.border = currentColor.name === 'সাদা' ? '3px solid #ccc' : 'none';
+            const container = document.getElementById('colorsOptions');
+            container.innerHTML = '';
+            let opts = [currentColor];
+            while (opts.length < 6) {
+                const c = colors[Math.floor(Math.random() * colors.length)];
+                if (!opts.find(o => o.name === c.name)) opts.push(c);
+            }
+            shuffle(opts).forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn text-option';
+                btn.textContent = c.name;
+                btn.onclick = () => checkAnswer(btn, c.name === currentColor.name, 'colors', initColorsGame);
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== SHAPES GAME ==========
+        let currentShape = null;
+        function initShapesGame() {
+            currentShape = shapes[Math.floor(Math.random() * shapes.length)];
+            document.getElementById('targetShape').textContent = currentShape.emoji;
+            const container = document.getElementById('shapesOptions');
+            container.innerHTML = '';
+            let opts = [currentShape];
+            while (opts.length < 6) {
+                const s = shapes[Math.floor(Math.random() * shapes.length)];
+                if (!opts.find(o => o.name === s.name)) opts.push(s);
+            }
+            shuffle(opts).forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn text-option';
+                btn.textContent = s.name;
+                btn.onclick = () => checkAnswer(btn, s.name === currentShape.name, 'shapes', initShapesGame);
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== SHARED FUNCTIONS ==========
+        function checkAnswer(btn, isCorrect, gameKey, initFn) {
+            if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+            if (isCorrect) {
+                btn.classList.add('correct');
+                scores[gameKey] += 10;
+                document.getElementById(gameKey + 'Score').textContent = scores[gameKey];
+                showFeedback(true);
+                currentRound++;
+                if (currentRound >= maxRounds) setTimeout(showCelebration, 1000);
+                else setTimeout(initFn, 1000);
+            } else {
+                btn.classList.add('wrong');
+                showFeedback(false);
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        function selectOrderItem(btn, orderArr, gameKey, slotSelector, initFn, isNumber = false) {
+            if (btn.classList.contains('used')) return;
+            const idx = gameKey === 'order' ? currentOrderIndex : currentNumOrderIndex;
+            const expected = orderArr[idx];
+            const val = isNumber ? parseInt(btn.dataset.value) : btn.dataset.value;
+            if (val === expected) {
+                btn.classList.add('used');
+                const slots = document.querySelectorAll(slotSelector + ' .order-slot');
+                slots[idx].textContent = expected;
+                slots[idx].classList.add('filled');
+                if (gameKey === 'order') currentOrderIndex++;
+                else currentNumOrderIndex++;
+                scores[gameKey] += 10;
+                document.getElementById(gameKey + 'Score').textContent = scores[gameKey];
+                showFeedback(true);
+                const newIdx = gameKey === 'order' ? currentOrderIndex : currentNumOrderIndex;
+                if (newIdx >= orderArr.length) {
+                    currentRound++;
+                    if (currentRound >= maxRounds) setTimeout(showCelebration, 1000);
+                    else setTimeout(initFn, 1000);
+                }
+            } else {
+                showFeedback(false);
+            }
+        }
+
+        // ========== DRAWING PAD ==========
+        const drawData = {
+            english: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+            numbers: ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'],
+            swarabarna: ['অ', 'আ', 'ই', 'ঈ', 'উ', 'ঊ', 'ঋ', 'এ', 'ঐ', 'ও', 'ঔ'],
+            banjonbarna: ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ', 'ঝ', 'ঞ', 'ট', 'ঠ', 'ড', 'ঢ', 'ণ', 'ত', 'থ', 'দ', 'ধ', 'ন', 'প', 'ফ', 'ব', 'ভ', 'ম', 'য', 'র', 'ল', 'শ', 'ষ', 'স', 'হ', 'ড়', 'ঢ়', 'য়', 'ৎ', 'ং', 'ঃ', 'ঁ']
+        };
+
+        let drawCategory = 'english';
+        let drawIndex = 0;
+        let drawCtx = null;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let drawColor = '#1e1b4b';
+        let brushSize = 8;
+
+        function initDrawGame() {
+            const canvas = document.getElementById('drawCanvas');
+            drawCtx = canvas.getContext('2d');
+
+            // Set up canvas for high DPI displays
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * 2;
+            canvas.height = rect.height * 2;
+            drawCtx.scale(2, 2);
+
+            drawCtx.lineCap = 'round';
+            drawCtx.lineJoin = 'round';
+
+            // Remove existing listeners
+            canvas.onmousedown = null;
+            canvas.onmousemove = null;
+            canvas.onmouseup = null;
+            canvas.onmouseleave = null;
+            canvas.ontouchstart = null;
+            canvas.ontouchmove = null;
+            canvas.ontouchend = null;
+
+            // Mouse events
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('mouseleave', stopDraw);
+
+            // Touch events
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', stopDraw);
+
+            drawCategory = 'english';
+            drawIndex = 0;
+            updateDrawDisplay();
+            clearCanvas();
+
+            // Reset tab active state
+            document.querySelectorAll('.draw-tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === 0);
+            });
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = e.target.getBoundingClientRect();
+            lastX = touch.clientX - rect.left;
+            lastY = touch.clientY - rect.top;
+            isDrawing = true;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const touch = e.touches[0];
+            const rect = e.target.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+
+            drawCtx.beginPath();
+            drawCtx.strokeStyle = drawColor;
+            drawCtx.lineWidth = brushSize;
+            drawCtx.moveTo(lastX, lastY);
+            drawCtx.lineTo(x, y);
+            drawCtx.stroke();
+
+            lastX = x;
+            lastY = y;
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            const rect = e.target.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            drawCtx.beginPath();
+            drawCtx.strokeStyle = drawColor;
+            drawCtx.lineWidth = brushSize;
+            drawCtx.moveTo(lastX, lastY);
+            drawCtx.lineTo(x, y);
+            drawCtx.stroke();
+
+            lastX = x;
+            lastY = y;
+        }
+
+        function stopDraw() {
+            isDrawing = false;
+        }
+
+        function clearCanvas() {
+            if (!drawCtx) return;
+            const canvas = document.getElementById('drawCanvas');
+            const rect = canvas.getBoundingClientRect();
+            drawCtx.clearRect(0, 0, rect.width, rect.height);
+        }
+
+        function switchDrawCategory(cat) {
+            drawCategory = cat;
+            drawIndex = 0;
+            updateDrawDisplay();
+            clearCanvas();
+
+            document.querySelectorAll('.draw-tab').forEach(tab => {
+                const tabCat = tab.textContent === 'ABC' ? 'english' :
+                               tab.textContent === '১২৩' ? 'numbers' :
+                               tab.textContent === 'স্বরবর্ণ' ? 'swarabarna' : 'banjonbarna';
+                tab.classList.toggle('active', tabCat === cat);
+            });
+        }
+
+        function prevDrawItem() {
+            const items = drawData[drawCategory];
+            drawIndex = (drawIndex - 1 + items.length) % items.length;
+            updateDrawDisplay();
+            clearCanvas();
+        }
+
+        function nextDrawItem() {
+            const items = drawData[drawCategory];
+            drawIndex = (drawIndex + 1) % items.length;
+            updateDrawDisplay();
+            clearCanvas();
+        }
+
+        function updateDrawDisplay() {
+            const items = drawData[drawCategory];
+            document.getElementById('guideLetter').textContent = items[drawIndex];
+            document.getElementById('drawCounter').textContent = `${drawIndex + 1}/${items.length}`;
+        }
+
+        function setDrawColor(color) {
+            drawColor = color;
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.style.background === color);
+            });
+        }
+
+        function setBrushSize(size) {
+            brushSize = size;
+            document.querySelectorAll('.brush-btn').forEach((btn, i) => {
+                const sizes = [4, 8, 14];
+                btn.classList.toggle('active', sizes[i] === size);
+            });
+        }
+
+        // Initialize
+        createBackgroundDecorations();
+    </script>
+</body>
+</html>
