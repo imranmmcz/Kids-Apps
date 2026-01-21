@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Baby Bouncer Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-1: #ffecd2;
+            --bg-gradient-2: #fcb69f;
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent: #ffe66d;
+            --purple: #a855f7;
+            --blue: #3b82f6;
+            --green: #22c55e;
+            --orange: #f97316;
+            --pink: #ec4899;
+            --text: #2d3748;
+            --white: #ffffff;
+        }
+
+        .dark {
+            --bg-gradient-1: #1a1a2e;
+            --bg-gradient-2: #16213e;
+            --text: #f0f0f0;
+            --white: #2d2d44;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text);
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Floating decorations */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+        .shape:nth-child(3) { top: 60%; left: 5%; animation-delay: 2s; }
+        .shape:nth-child(4) { top: 70%; right: 10%; animation-delay: 3s; }
+        .shape:nth-child(5) { top: 40%; left: 80%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--purple), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            animation: titleBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes titleBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .score-item {
+            background: var(--white);
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .score-item span {
+            font-size: 1.2rem;
+        }
+
+        /* Main Game Area */
+        .game-area {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Menu Screen */
+        .menu-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 4px solid transparent;
+        }
+
+        .game-card:hover, .game-card:active {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .game-card.colors { border-color: var(--primary); }
+        .game-card.numbers { border-color: var(--blue); }
+        .game-card.shapes { border-color: var(--green); }
+        .game-card.bounce { border-color: var(--purple); }
+
+        .game-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .game-card.colors .game-icon { background: linear-gradient(135deg, var(--primary), var(--orange)); }
+        .game-card.numbers .game-icon { background: linear-gradient(135deg, var(--blue), var(--secondary)); }
+        .game-card.shapes .game-icon { background: linear-gradient(135deg, var(--green), var(--accent)); }
+        .game-card.bounce .game-icon { background: linear-gradient(135deg, var(--purple), var(--pink)); }
+
+        .game-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .game-info p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Game Screens */
+        .game-screen {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Bouncing Character */
+        .bouncer-container {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .bouncer {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--accent), var(--orange));
+            border-radius: 50%;
+            position: relative;
+            animation: bounce 0.6s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+        }
+
+        .bouncer::before {
+            content: '😊';
+            font-size: 3rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bouncer.happy::before { content: '🥳'; }
+        .bouncer.stars::before { content: '🌟'; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
+            50% { transform: translateY(-80px) scaleX(0.9) scaleY(1.1); }
+        }
+
+        .bouncer-shadow {
+            width: 80px;
+            height: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: shadowPulse 0.6s ease-in-out infinite;
+        }
+
+        @keyframes shadowPulse {
+            0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.3; }
+            50% { transform: translateX(-50%) scaleX(0.6); opacity: 0.1; }
+        }
+
+        /* Question Display */
+        .question-box {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .question-box h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .question-box .target {
+            font-size: 3rem;
+            margin: 15px 0;
+        }
+
+        /* Answer Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: var(--white);
+            border: 4px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 25px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .option-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--secondary);
+        }
+
+        .option-btn.correct {
+            background: var(--green);
+            border-color: var(--green);
+            animation: correctPop 0.5s ease-out;
+        }
+
+        .option-btn.wrong {
+            background: var(--primary);
+            border-color: var(--primary);
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Color options */
+        .color-option {
+            width: 100%;
+            height: 80px;
+            border-radius: 20px;
+            border: 4px solid rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .color-option:hover {
+            transform: scale(1.05);
+        }
+
+        /* Shape display */
+        .shape-display {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        /* Celebration */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Free Bounce Mode */
+        .bounce-area {
+            height: 400px;
+            background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.3) 100%);
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .free-bouncer {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .tap-hint {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .stars-collected {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--white);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .floating-star {
+            position: absolute;
+            font-size: 2rem;
+            animation: starFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes starFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255,255,255,0.5);
+            border-radius: 50px;
+            height: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--secondary));
+            border-radius: 50px;
+            transition: width 0.5s ease;
+        }
+
+        /* Level Complete */
+        .level-complete {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .level-complete h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .level-complete .emoji {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: celebrateBounce 0.5s ease-in-out infinite;
+        }
+
+        @keyframes celebrateBounce {
+            0%, 100% { transform: scale(1) rotate(-5deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, var(--green), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .header h1 { font-size: 2rem; }
+            .game-card { padding: 20px; }
+            .game-icon { width: 60px; height: 60px; font-size: 1.8rem; }
+            .option-btn { padding: 20px; font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <svg class="shape" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="25" fill="#ff6b6b"/></svg>
+        <svg class="shape" width="50" height="50" viewBox="0 0 50 50"><rect width="50" height="50" fill="#4ecdc4"/></svg>
+        <svg class="shape" width="50" height="50" viewBox="0 0 50 50"><polygon points="25,0 50,50 0,50" fill="#ffe66d"/></svg>
+        <svg class="shape" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="25" fill="#a855f7"/></svg>
+        <svg class="shape" width="50" height="50" viewBox="0 0 50 50"><rect width="50" height="50" rx="10" fill="#3b82f6"/></svg>
+    </div>
+
+    <div class="celebration" id="celebration"></div>
+
+    <div class="app-container">
+        <header class="header">
+            <h1>🎈 Baby Bouncer 🎈</h1>
+            <div class="score-display">
+                <div class="score-item">
+                    <span>⭐</span>
+                    <span id="totalStars">0</span>
+                </div>
+                <div class="score-item">
+                    <span>🏆</span>
+                    <span id="level">1</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-area">
+            <!-- Menu Screen -->
+            <div class="menu-screen" id="menuScreen">
+                <div class="game-card colors" onclick="startGame('colors')">
+                    <div class="game-icon">🌈</div>
+                    <div class="game-info">
+                        <h3>Learn Colors</h3>
+                        <p>Match the bouncing colors!</p>
+                    </div>
+                </div>
+                <div class="game-card numbers" onclick="startGame('numbers')">
+                    <div class="game-icon">🔢</div>
+                    <div class="game-info">
+                        <h3>Count Numbers</h3>
+                        <p>Count and learn 1-10!</p>
+                    </div>
+                </div>
+                <div class="game-card shapes" onclick="startGame('shapes')">
+                    <div class="game-icon">🔷</div>
+                    <div class="game-info">
+                        <h3>Fun Shapes</h3>
+                        <p>Find the matching shape!</p>
+                    </div>
+                </div>
+                <div class="game-card bounce" onclick="startGame('bounce')">
+                    <div class="game-icon">🎾</div>
+                    <div class="game-info">
+                        <h3>Free Bounce</h3>
+                        <p>Tap to bounce & collect stars!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colors Game -->
+            <div class="game-screen" id="colorsGame">
+                <button class="back-btn" onclick="goToMenu()">← Back</button>
+                <div class="progress-container">
+                    <div class="progress-bar" id="colorsProgress" style="width: 0%"></div>
+                </div>
+                <div class="bouncer-container">
+                    <div class="bouncer-shadow"></div>
+                    <div class="bouncer" id="colorBouncer"></div>
+                </div>
+                <div class="question-box">
+                    <h2>What color is the bouncer?</h2>
+                </div>
+                <div class="options-grid" id="colorOptions"></div>
+            </div>
+
+            <!-- Numbers Game -->
+            <div class="game-screen" id="numbersGame">
+                <button class="back-btn" onclick="goToMenu()">← Back</button>
+                <div class="progress-container">
+                    <div class="progress-bar" id="numbersProgress" style="width: 0%"></div>
+                </div>
+                <div class="bouncer-container">
+                    <div class="bouncer-shadow"></div>
+                    <div class="bouncer" id="numberBouncer"></div>
+                </div>
+                <div class="question-box">
+                    <h2>How many objects?</h2>
+                    <div class="target" id="countTarget"></div>
+                </div>
+                <div class="options-grid" id="numberOptions"></div>
+            </div>
+
+            <!-- Shapes Game -->
+            <div class="game-screen" id="shapesGame">
+                <button class="back-btn" onclick="goToMenu()">← Back</button>
+                <div class="progress-container">
+                    <div class="progress-bar" id="shapesProgress" style="width: 0%"></div>
+                </div>
+                <div class="bouncer-container">
+                    <div class="bouncer-shadow"></div>
+                    <div class="bouncer" id="shapeBouncer"></div>
+                </div>
+                <div class="question-box">
+                    <h2>Find this shape!</h2>
+                    <div class="target" id="shapeTarget"></div>
+                </div>
+                <div class="options-grid" id="shapeOptions"></div>
+            </div>
+
+            <!-- Free Bounce Game -->
+            <div class="game-screen" id="bounceGame">
+                <button class="back-btn" onclick="goToMenu()">← Back</button>
+                <div class="bounce-area" id="bounceArea">
+                    <div class="stars-collected">⭐ <span id="bounceStars">0</span></div>
+                    <div class="free-bouncer" id="freeBouncer">😄</div>
+                </div>
+                <p class="tap-hint">Tap to bounce and collect stars!</p>
+            </div>
+
+            <!-- Level Complete -->
+            <div class="level-complete" id="levelComplete">
+                <div class="emoji">🎉</div>
+                <h2>Amazing Job!</h2>
+                <p>You earned <span id="earnedStars">0</span> stars!</p>
+                <button class="next-btn" onclick="goToMenu()">Play More!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Game state
+        let totalStars = 0;
+        let level = 1;
+        let currentQuestion = 0;
+        let questionsPerRound = 5;
+        let currentGame = '';
+
+        // Game data
+        const colors = [
+            { name: 'Red', hex: '#ff6b6b', emoji: '🔴' },
+            { name: 'Blue', hex: '#3b82f6', emoji: '🔵' },
+            { name: 'Green', hex: '#22c55e', emoji: '🟢' },
+            { name: 'Yellow', hex: '#fbbf24', emoji: '🟡' },
+            { name: 'Purple', hex: '#a855f7', emoji: '🟣' },
+            { name: 'Orange', hex: '#f97316', emoji: '🟠' }
+        ];
+
+        const shapes = [
+            { name: 'Circle', svg: '<circle cx="40" cy="40" r="35"/>', emoji: '⚪' },
+            { name: 'Square', svg: '<rect x="5" y="5" width="70" height="70"/>', emoji: '⬜' },
+            { name: 'Triangle', svg: '<polygon points="40,5 75,75 5,75"/>', emoji: '🔺' },
+            { name: 'Star', svg: '<polygon points="40,5 48,35 80,35 55,55 65,85 40,65 15,85 25,55 0,35 32,35"/>', emoji: '⭐' },
+            { name: 'Heart', svg: '<path d="M40 75 C10 50, 5 25, 25 15 C35 10, 40 20, 40 20 C40 20, 45 10, 55 15 C75 25, 70 50, 40 75"/>', emoji: '❤️' }
+        ];
+
+        const countEmojis = ['🍎', '🌟', '🎈', '🦋', '🌸', '🐱', '🐶', '🍦', '🚗', '⚽'];
+
+        function startGame(game) {
+            currentGame = game;
+            currentQuestion = 0;
+            document.getElementById('menuScreen').style.display = 'none';
+            document.getElementById('levelComplete').style.display = 'none';
+
+            if (game === 'colors') {
+                document.getElementById('colorsGame').classList.add('active');
+                nextColorQuestion();
+            } else if (game === 'numbers') {
+                document.getElementById('numbersGame').classList.add('active');
+                nextNumberQuestion();
+            } else if (game === 'shapes') {
+                document.getElementById('shapesGame').classList.add('active');
+                nextShapeQuestion();
+            } else if (game === 'bounce') {
+                document.getElementById('bounceGame').classList.add('active');
+                initFreeBounce();
+            }
+        }
+
+        function goToMenu() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('levelComplete').style.display = 'none';
+            document.getElementById('menuScreen').style.display = 'flex';
+        }
+
+        // Colors Game
+        function nextColorQuestion() {
+            if (currentQuestion >= questionsPerRound) {
+                showLevelComplete();
+                return;
+            }
+
+            const progress = (currentQuestion / questionsPerRound) * 100;
+            document.getElementById('colorsProgress').style.width = progress + '%';
+
+            const correctColor = colors[Math.floor(Math.random() * colors.length)];
+            const bouncer = document.getElementById('colorBouncer');
+            bouncer.style.background = correctColor.hex;
+
+            const options = [correctColor];
+            while (options.length < 4) {
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                if (!options.find(c => c.name === randomColor.name)) {
+                    options.push(randomColor);
+                }
+            }
+            shuffleArray(options);
+
+            const optionsContainer = document.getElementById('colorOptions');
+            optionsContainer.innerHTML = options.map(color => `
+                <div class="color-option"
+                     style="background: ${color.hex}"
+                     onclick="checkColorAnswer(this, '${color.name}', '${correctColor.name}')"
+                     data-name="${color.name}">
+                </div>
+            `).join('');
+        }
+
+        function checkColorAnswer(element, selected, correct) {
+            if (element.classList.contains('correct') || element.classList.contains('wrong')) return;
+
+            if (selected === correct) {
+                element.classList.add('correct');
+                element.style.transform = 'scale(1.1)';
+                element.style.border = '4px solid #22c55e';
+                addStar();
+                currentQuestion++;
+                setTimeout(nextColorQuestion, 1000);
+            } else {
+                element.classList.add('wrong');
+                element.style.border = '4px solid #ff6b6b';
+                setTimeout(() => {
+                    element.classList.remove('wrong');
+                    element.style.border = '4px solid rgba(255,255,255,0.5)';
+                }, 500);
+            }
+        }
+
+        // Numbers Game
+        function nextNumberQuestion() {
+            if (currentQuestion >= questionsPerRound) {
+                showLevelComplete();
+                return;
+            }
+
+            const progress = (currentQuestion / questionsPerRound) * 100;
+            document.getElementById('numbersProgress').style.width = progress + '%';
+
+            const correctNumber = Math.floor(Math.random() * 5) + 1;
+            const emoji = countEmojis[Math.floor(Math.random() * countEmojis.length)];
+
+            document.getElementById('countTarget').textContent = emoji.repeat(correctNumber);
+
+            const options = [correctNumber];
+            while (options.length < 4) {
+                const randomNum = Math.floor(Math.random() * 5) + 1;
+                if (!options.includes(randomNum)) {
+                    options.push(randomNum);
+                }
+            }
+            shuffleArray(options);
+
+            const optionsContainer = document.getElementById('numberOptions');
+            optionsContainer.innerHTML = options.map(num => `
+                <button class="option-btn" onclick="checkNumberAnswer(this, ${num}, ${correctNumber})">
+                    ${num}
+                </button>
+            `).join('');
+        }
+
+        function checkNumberAnswer(element, selected, correct) {
+            if (element.classList.contains('correct') || element.classList.contains('wrong')) return;
+
+            if (selected === correct) {
+                element.classList.add('correct');
+                addStar();
+                currentQuestion++;
+                setTimeout(nextNumberQuestion, 1000);
+            } else {
+                element.classList.add('wrong');
+                setTimeout(() => element.classList.remove('wrong'), 500);
+            }
+        }
+
+        // Shapes Game
+        function nextShapeQuestion() {
+            if (currentQuestion >= questionsPerRound) {
+                showLevelComplete();
+                return;
+            }
+
+            const progress = (currentQuestion / questionsPerRound) * 100;
+            document.getElementById('shapesProgress').style.width = progress + '%';
+
+            const correctShape = shapes[Math.floor(Math.random() * shapes.length)];
+            const shapeColors = ['#ff6b6b', '#3b82f6', '#22c55e', '#fbbf24', '#a855f7'];
+            const shapeColor = shapeColors[Math.floor(Math.random() * shapeColors.length)];
+
+            document.getElementById('shapeTarget').innerHTML = `
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                    <g fill="${shapeColor}">${correctShape.svg}</g>
+                </svg>
+            `;
+
+            const options = [correctShape];
+            while (options.length < 4) {
+                const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+                if (!options.find(s => s.name === randomShape.name)) {
+                    options.push(randomShape);
+                }
+            }
+            shuffleArray(options);
+
+            const optionsContainer = document.getElementById('shapeOptions');
+            optionsContainer.innerHTML = options.map(shape => `
+                <button class="option-btn" onclick="checkShapeAnswer(this, '${shape.name}', '${correctShape.name}')">
+                    <svg class="shape-display" viewBox="0 0 80 80">
+                        <g fill="#666">${shape.svg}</g>
+                    </svg>
+                </button>
+            `).join('');
+        }
+
+        function checkShapeAnswer(element, selected, correct) {
+            if (element.classList.contains('correct') || element.classList.contains('wrong')) return;
+
+            if (selected === correct) {
+                element.classList.add('correct');
+                addStar();
+                currentQuestion++;
+                setTimeout(nextShapeQuestion, 1000);
+            } else {
+                element.classList.add('wrong');
+                setTimeout(() => element.classList.remove('wrong'), 500);
+            }
+        }
+
+        // Free Bounce Mode
+        let bounceStars = 0;
+        let bounceY = 0;
+        let velocityY = 0;
+        let isJumping = false;
+        let animationId = null;
+        let floatingStars = [];
+
+        function initFreeBounce() {
+            bounceStars = 0;
+            document.getElementById('bounceStars').textContent = '0';
+            const bouncer = document.getElementById('freeBouncer');
+            const area = document.getElementById('bounceArea');
+
+            bounceY = 20;
+            velocityY = 0;
+            bouncer.style.bottom = bounceY + 'px';
+
+            // Clear existing stars
+            floatingStars.forEach(star => star.element.remove());
+            floatingStars = [];
+
+            // Create floating stars
+            for (let i = 0; i < 5; i++) {
+                createFloatingStar();
+            }
+
+            area.onclick = jump;
+            area.ontouchstart = (e) => {
+                e.preventDefault();
+                jump();
+            };
+
+            if (animationId) cancelAnimationFrame(animationId);
+            animateBounce();
+        }
+
+        function createFloatingStar() {
+            const area = document.getElementById('bounceArea');
+            const star = document.createElement('div');
+            star.className = 'floating-star';
+            star.textContent = '⭐';
+            star.style.left = Math.random() * (area.offsetWidth - 40) + 'px';
+            star.style.top = Math.random() * (area.offsetHeight - 100) + 50 + 'px';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            area.appendChild(star);
+            floatingStars.push({
+                element: star,
+                x: parseFloat(star.style.left),
+                y: parseFloat(star.style.top)
+            });
+        }
+
+        function jump() {
+            velocityY = 15;
+            isJumping = true;
+        }
+
+        function animateBounce() {
+            const bouncer = document.getElementById('freeBouncer');
+            const area = document.getElementById('bounceArea');
+
+            if (!document.getElementById('bounceGame').classList.contains('active')) {
+                return;
+            }
+
+            velocityY -= 0.5; // gravity
+            bounceY += velocityY;
+
+            if (bounceY <= 20) {
+                bounceY = 20;
+                velocityY = 0;
+                isJumping = false;
+            }
+
+            if (bounceY > area.offsetHeight - 100) {
+                bounceY = area.offsetHeight - 100;
+                velocityY = -velocityY * 0.5;
+            }
+
+            bouncer.style.bottom = bounceY + 'px';
+
+            // Update face based on state
+            if (velocityY > 5) {
+                bouncer.textContent = '😆';
+            } else if (velocityY < -5) {
+                bouncer.textContent = '😮';
+            } else {
+                bouncer.textContent = '😄';
+            }
+
+            // Check star collisions
+            const bouncerRect = bouncer.getBoundingClientRect();
+            floatingStars.forEach((star, index) => {
+                if (!star.element.parentNode) return;
+                const starRect = star.element.getBoundingClientRect();
+                if (isColliding(bouncerRect, starRect)) {
+                    star.element.style.animation = 'none';
+                    star.element.style.transform = 'scale(2)';
+                    star.element.style.opacity = '0';
+                    setTimeout(() => {
+                        if (star.element.parentNode) {
+                            star.element.remove();
+                        }
+                        createFloatingStar();
+                    }, 300);
+                    bounceStars++;
+                    addStar();
+                    document.getElementById('bounceStars').textContent = bounceStars;
+                    floatingStars.splice(index, 1);
+                }
+            });
+
+            animationId = requestAnimationFrame(animateBounce);
+        }
+
+        function isColliding(rect1, rect2) {
+            return !(rect1.right < rect2.left ||
+                     rect1.left > rect2.right ||
+                     rect1.bottom < rect2.top ||
+                     rect1.top > rect2.bottom);
+        }
+
+        // Utility functions
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function addStar() {
+            totalStars++;
+            document.getElementById('totalStars').textContent = totalStars;
+            showCelebration();
+        }
+
+        function showCelebration() {
+            const celebration = document.getElementById('celebration');
+            celebration.style.display = 'block';
+            celebration.innerHTML = '';
+
+            const confettiColors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#a855f7', '#3b82f6', '#22c55e'];
+
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                celebration.appendChild(confetti);
+            }
+
+            setTimeout(() => {
+                celebration.style.display = 'none';
+            }, 2000);
+        }
+
+        function showLevelComplete() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            level++;
+            document.getElementById('level').textContent = level;
+            document.getElementById('earnedStars').textContent = questionsPerRound;
+            document.getElementById('levelComplete').style.display = 'block';
+
+            // Big celebration
+            for (let i = 0; i < 3; i++) {
+                setTimeout(showCelebration, i * 500);
+            }
+        }
+    </script>
+</body>
+</html>
